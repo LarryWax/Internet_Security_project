@@ -1,8 +1,4 @@
-package larry.IoTServer;
-
 import java.security.*;
-
-import larry.crypto.*;
 
 public class Whitelist {
 	

@@ -1,13 +1,10 @@
-package larry.IoTServer;
-
 import java.io.*;
 import java.net.Socket;
 import java.security.*;
 import java.util.Arrays;
 
-import larry.crypto.*;
-
 public class ClientIoT {
+	private static Socket s;
 	public static void main(String[] args) throws IOException {
 		
 		try{
@@ -19,11 +16,11 @@ public class ClientIoT {
 			final PrivateKey privateKey = c.genPrivKeyFromStr(privKey);
 			final PublicKey gatewayPublicKey = c.genPubKeyFromStr(gatKey);
 			
-			String name = "ALARM";
+			String name = args[0];
 		
 			int value = (int)(Math.random()*100);
 		
-			Socket s = new Socket("127.0.1.1",9999);
+			s = new Socket("127.0.1.1",9999);
 			DataInputStream dIn = new DataInputStream(s.getInputStream());
 			DataOutputStream dOut = new DataOutputStream(s.getOutputStream());
 		
@@ -46,7 +43,7 @@ public class ClientIoT {
 			dOut.write(confMsg);
 		
 			//Cerimonia conclusa
-			System.out.println("Authenticated with Gateway");
+			System.out.println(name+" authenticated with Gateway");
 			
 
 			while(true){
@@ -55,22 +52,22 @@ public class ClientIoT {
 				encRequest = Arrays.copyOf(encRequest, len);
 			
 				String request = new String(c.decryptSimm(simmKey, encRequest, "AES"));
+				System.out.print("Ho ricevuto una richiesta ");
 				if(request.equals("GET")){
+					System.out.println(request);
 					String response = "Value: "+ value;
 					byte[] encResponse = c.encryptSimm(simmKey, response.getBytes(), "AES");
 					dOut.write(encResponse);
 				}
 				else if(request.substring(0,3).equals("SET")){
+					System.out.println(request);
 					value = (int)Integer.parseInt(request.substring(4));
 					String response = "Value: "+ value;
 					byte[] encResponse = c.encryptSimm(simmKey, response.getBytes(), "AES");
 					dOut.write(encResponse);
 					}
-				else if(request.equals("CLOSE")){
-					s.close();
-					return;
-					}
 				else{
+					System.out.println(request);
 					String response = "UNKNOWN";
 					byte[] encResponse = c.encryptSimm(simmKey, response.getBytes(), "AES");
 					dOut.write(encResponse);
@@ -78,6 +75,7 @@ public class ClientIoT {
 			}
 		}catch(Exception e){
 			e.printStackTrace();
+			s.close();
 		}
 	}
 

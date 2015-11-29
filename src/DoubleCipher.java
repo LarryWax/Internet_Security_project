@@ -1,5 +1,3 @@
-package larry.crypto;
-
 import java.io.IOException;
 import java.security.*;
 import java.security.spec.*;
