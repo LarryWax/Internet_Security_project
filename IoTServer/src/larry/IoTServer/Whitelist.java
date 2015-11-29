@@ -1,23 +1,24 @@
 package larry.IoTServer;
 
-import java.security.Key;
+import java.security.*;
 
-import javax.crypto.spec.SecretKeySpec;
-
-import sun.misc.BASE64Decoder;
+import larry.crypto.*;
 
 public class Whitelist {
 	
-	public String[] clientID;
-	public Key[] clientPublicKey;
+	protected String[] clientID = new String[100];
+	protected PublicKey[] clientPublicKey = new PublicKey[100];
+	private DoubleCipher c = new DoubleCipher();
 	
 	public Whitelist(String[] id, String[] key){
 		try{
 			for(int i=0; i<id.length; i++){
 				this.clientID[i] = id[i];
-				final byte[] bytesKey = new BASE64Decoder().decodeBuffer(key[i]);
-				this.clientPublicKey[i] = new SecretKeySpec(bytesKey, 0, bytesKey.length, "RSA");
+				this.clientPublicKey[i] = c.genPubKeyFromStr(key[i]);
 			}
-		}catch(Exception e){System.out.println(e);}
+		}catch(Exception e){
+			System.out.println(e);
+			e.printStackTrace();
+			}
 	}
 }
