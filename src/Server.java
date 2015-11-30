@@ -4,6 +4,8 @@ import java.security.*;
 import java.security.spec.*;
 import java.util.Arrays;
 
+import javax.crypto.*;
+
 public class Server {
 	static String requestBuffer = " ";
 	static String responseBuffer = " ";
@@ -45,8 +47,8 @@ public class Server {
 		
 		public ServerIoT() throws IOException, NoSuchAlgorithmException, InvalidKeySpecException{
 			
-			String[] key = {"MIGfMA0GCSqGSIb3DQEBAQUAA4GNADCBiQKBgQCbmFLg7rLZEdr7CHBe3j3k8V7PD/z8jXYh1XtIuJaARhHouc4XyLdY8gGx1FtODN7E9K2XYTm9CN01uss4wSTfN3vpgnl0m3o9dwXYmhGpnV7/rss0ay1Aknn6/cgocShw++zNt1GVWAXAvNGzPhcPYqvo+jh1pVjraLZORHQTAQIDAQAB"};
-			String[] ID = {"ALARM"};
+			String[] key = {"MIGfMA0GCSqGSIb3DQEBAQUAA4GNADCBiQKBgQCbmFLg7rLZEdr7CHBe3j3k8V7PD/z8jXYh1XtIuJaARhHouc4XyLdY8gGx1FtODN7E9K2XYTm9CN01uss4wSTfN3vpgnl0m3o9dwXYmhGpnV7/rss0ay1Aknn6/cgocShw++zNt1GVWAXAvNGzPhcPYqvo+jh1pVjraLZORHQTAQIDAQAB","MIGfMA0GCSqGSIb3DQEBAQUAA4GNADCBiQKBgQCGNymNF3th2fsrCYJ6bbndf+YibapiIYV/Jx55Mkegm+EsBQOPmTjh5pXgoUqFuNR8co15beTVxK17OcQ4BTBzU7ui8ssUeCRvozYHQWlMFgnSztzi6+yH740UVlCVL7USochLLQRkgMJ4oCAhXT1sSOSGhoiW3bmlnj321FJY0QIDAQAB"};
+			String[] ID = {"ALARM","LIGHT"};
 			W = new Whitelist(ID, key);
 			
 			String privateKeyStr = "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";
@@ -62,9 +64,9 @@ public class Server {
 		}
 		
 		public void run(){
-			try{
-				while(true){
 			
+			while(true){
+				try{
 					//Listen for someone
 					Socket clientIoT = listenerIoT.accept();
 				
@@ -77,50 +79,51 @@ public class Server {
 					int len = dIn.read(encCliID);
 					encCliID = Arrays.copyOf(encCliID, len);
 					int i;
-					for(i=0; i<W.clientPublicKey.length; i++){
-						String message = new String(c.decryptAsimmPub(W.clientPublicKey[i], encCliID, "RSA"));
-						if(message.equals(W.clientID[i]))
-							break;
-					}
-					if(i==W.clientPublicKey.length){
-						clientIoT.close();
-						break;
-					}
-				
-					//Gateway manda la sua identita e il segreto per la chiave simmetrica tutto cifrato prima
-					//con la chiave pubblica del client e poi con la sua chiave privata
-					String seed = "INTERNET_SECURITY";
-					final byte[] encGatMsg = c.doubleEncrypt(seed, W.clientPublicKey[i], privateKey);
-					dOut.write(encGatMsg);
-				
-					//Gateway calcola la chiave simmetrica
-					final Key simmKey = c.generateSimmKey(seed);
-				
-					//Il client risponde con la sua chiave pubblica criptata con la chiave simmetrica
-					byte[] encCliKey = new byte[1024];
-					len = dIn.read(encCliKey);
-					encCliKey = Arrays.copyOf(encCliKey, len);
-					String cliKeyStr = new String(c.decryptSimm(simmKey, encCliKey, "AES"));
+						for(i=0; i<W.clientPublicKey.length; i++){
+							try{
+								String message = new String(c.decryptAsimmPub(W.clientPublicKey[i], encCliID, "RSA"));
+								if(message.equals(W.clientID[i]))
+									break;
+							}
+							catch(BadPaddingException | InvalidKeyException | NoSuchAlgorithmException | NoSuchPaddingException | IllegalBlockSizeException e){
+								continue;
+							}
+						}
+						
+						if(i>=W.clientID.length){
+							System.out.println("\nUnknown IoT Device, closing connection.");
+							clientIoT.close();
+						}
 					
-					if(!(cliKeyStr.equals(c.decodePublicKey(W.clientPublicKey[i])))){
-						System.out.println("\n"+cliKeyStr+"\n");
-						System.out.println("\n"+c.decodePublicKey(W.clientPublicKey[i])+"\n");
-						clientIoT.close();
-						break;
-					}
+						//Gateway manda la sua identita e il segreto per la chiave simmetrica tutto cifrato prima
+						//con la chiave pubblica del client e poi con la sua chiave privata
+						String seed = "INTERNET_SECURITY";
+						final byte[] encGatMsg = c.doubleEncrypt(seed, W.clientPublicKey[i], privateKey);
+						dOut.write(encGatMsg);
 				
-					System.out.println("\n"+W.clientID[i]+" IoT client authenticated!");
-					Thread t = new IoTManager(W.clientID[i], clientIoT, simmKey);		
-					t.start();
+						//Gateway calcola la chiave simmetrica
+						final Key simmKey = c.generateSimmKey(seed);
+				
+						//Il client risponde con la sua chiave pubblica criptata con la chiave simmetrica
+						byte[] encCliKey = new byte[1024];
+						len = dIn.read(encCliKey);
+						encCliKey = Arrays.copyOf(encCliKey, len);
+						String cliKeyStr = new String(c.decryptSimm(simmKey, encCliKey, "AES"));
+					
+						if(!(cliKeyStr.equals(c.decodePublicKey(W.clientPublicKey[i])))){
+							System.out.println("\n"+cliKeyStr+"\n");
+							System.out.println("\n"+c.decodePublicKey(W.clientPublicKey[i])+"\n");
+							clientIoT.close();
+							break;
+						}
+				
+						System.out.println("\n"+W.clientID[i]+" IoT client authenticated!");
+						Thread t = new IoTManager(W.clientID[i], clientIoT, simmKey);		
+						t.start();
+					
 				}
-			}catch(Exception e){
-				System.out.println(e);
-				e.printStackTrace();
-				try {
-					listenerIoT.close();
-				} catch (IOException e1) {
-					e1.printStackTrace();
-					}
+				catch(Exception e){
+				}
 			}
 		}
 	}
@@ -223,11 +226,12 @@ public class Server {
 				e.printStackTrace();
 				try {
 					client.close();
-				} catch (IOException e1) {
+				}
+				catch (IOException e1) {
 					// TODO Auto-generated catch block
 					e1.printStackTrace();
 				}
-				}
 			}
+		}
 	}
 }

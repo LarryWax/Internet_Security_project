@@ -3,7 +3,7 @@ import java.net.Socket;
 import java.security.*;
 import java.util.Arrays;
 
-public class ClientIoT {
+public class WrongClientIoT {
 	private static Socket s;
 	public static void main(String[] args) throws IOException {
 		
@@ -16,7 +16,7 @@ public class ClientIoT {
 			final PrivateKey privateKey = c.genPrivKeyFromStr(privKey);
 			final PublicKey gatewayPublicKey = c.genPubKeyFromStr(gatKey);
 			
-			String name = "ALARM";
+			String name = args[0];
 		
 			int value = (int)(Math.random()*100);
 		

@@ -16,7 +16,7 @@ public class ClientIoT {
 			final PrivateKey privateKey = c.genPrivKeyFromStr(privKey);
 			final PublicKey gatewayPublicKey = c.genPubKeyFromStr(gatKey);
 			
-			String name = "ALARM";
+			String name = args[0];
 		
 			int value = (int)(Math.random()*100);
 		
