@@ -209,16 +209,13 @@ public class Server {
 						requestMonitor.notifyAll();
 					}
 
-					System.out.println("Sto provando a prendere il lock del monitor di risposta");
 					synchronized (responseMonitor){
 						if(responseBuffer.equals(" "));
 							responseMonitor.wait();
-						System.out.println("Ho preso il lock e sto mandando la risposta al client");
 						dOut.write(responseBuffer);
 						dOut.newLine();
 						dOut.flush();
 						responseBuffer = " ";
-						System.out.println("Ho mandato la risposta al client e adesso vado a fare in culo");
 					}
 				}
 			}
